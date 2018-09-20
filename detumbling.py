@@ -31,6 +31,7 @@ for k in range(0,len(m_light_output_temp)-1):
 		init = k
 		count = 1
 		
+	
 	elif l1==0.5 and l2==0 and count == 1:	#start of second eclipse
 		end = k 
 		break
