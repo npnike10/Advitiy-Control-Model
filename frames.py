@@ -83,6 +83,7 @@ def ecif2orbit(v_pos_i,v_vel_i,v_x_i):
 	
 	v_x_o = np.dot(m_DCM_OI,v_x_i)
 	
+	
 	return v_x_o
 
 def qBI2qBO(v_q_BI,v_pos_i,v_vel_i):
