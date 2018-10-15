@@ -59,9 +59,5 @@ plt.xlabel('time')
 plt.ylabel('w3')
 plt.savefig('w3 vs t')
 
-plt.figure(8)
-plt.plot(t, state[ : , ])
-plt.xlabel('time')
-plt.ylabel('w3')
-plt.savefig('w3 vs t')
+
 
