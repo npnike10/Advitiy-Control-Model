@@ -14,6 +14,7 @@ import qnv
 import satellite
 import sensor
 import solver as sol
+import matplotlib.pyplot as plt
 from test_cases import * 
 
 #Read position, velocity, sun-vector, light-boolean, magnetic field (in nanoTeslas) in ECIF from data file
@@ -191,3 +192,60 @@ np.savetxt('disturbance-total.csv',torque_dist_total, delimiter=",")
 np.savetxt('disturbance-gg.csv',torque_dist_gg, delimiter=",")
 np.savetxt('disturbance-solar.csv',torque_dist_solar, delimiter=",")
 np.savetxt('disturbance-aero.csv',torque_dist_aero, delimiter=",")
+
+time = m_sgp_output_i[init:end+1,0] - t0
+state = v_state
+euler = euler
+pos = m_sgp_output_i[init:end+1,1:4]
+vel = m_sgp_output_i[init:end+1,4:7]
+dist = torque_dist_total
+
+plt.figure(1)
+plt.plot(time,pos[ : ,0],label='pos_x')
+plt.plot(time,pos[ : ,1],label='pos_y')
+plt.plot(time,pos[ : ,2],label='pos_z')
+plt.title('position in meters')
+plt.legend()
+plt.savefig('position in meters')
+
+plt.figure(2)
+plt.plot(time,vel[ : ,0],label='vel_x')
+plt.plot(time,vel[ : ,1],label='vel_y')
+plt.plot(time,vel[ : ,2],label='vel_z')
+plt.title('velocity in meters per second')
+plt.legend()
+plt.savefig('velocity')
+
+plt.figure(3)
+plt.plot(time,state[ : ,0],label='q1')
+plt.plot(time,state[ : ,1],label='q2')
+plt.plot(time,state[ : ,2],label='q3')
+plt.plot(time,state[ : ,3],label='q4')
+plt.title('qBOB')
+plt.legend()
+plt.savefig('qBOB')
+
+plt.figure(4)
+plt.plot(time,state[ : ,4],label='wBOB_x')
+plt.plot(time,state[ : ,5],label='wBOB_y')
+plt.plot(time,state[ : ,6],label='wBOB_z')
+plt.title('wBOB in degrees')
+plt.legend()
+plt.savefig('wBOB')
+
+plt.figure(5)
+plt.plot(time,euler[:,0],label='roll')
+plt.plot(time,euler[:,1],label='pitch')
+plt.plot(time,euler[:,2],label='yaw')
+plt.ylim(-180,180)
+plt.title("euler_BO in degrees")
+plt.legend()
+plt.savefig('euler_BO')
+
+plt.figure(6)
+plt.plot(time,dist_b[:,0],label="t_x")
+plt.plot(time,dist_b[:,1],label="t_y")
+plt.plot(time,dist_b[:,2],label="t_z")
+plt.legend()
+plt.title('disturbance torque')
+plt.savefig('disturbance torque')
