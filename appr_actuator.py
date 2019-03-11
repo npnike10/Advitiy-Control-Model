@@ -10,7 +10,8 @@ def actuatorTypeA(sat):
     v_magnetic_field_b=quatRotate(sat.getQ_BI(),v_magnetic_field_i) #get mag field in body frame
     
     v_torque_app_b = np.cross(v_magnetic_moment_b,v_magnetic_field_b)
-    return v_torque_app_b
+    
+    sat.setAppTorque_b(v_torque_app_b)
 
 def actuatorTypeB(sat):
     #input: Torque required in body frame about COM
@@ -23,4 +24,5 @@ def actuatorTypeB(sat):
     v_magnetic_moment_b=(1/(np.linalg.norm(v_magnetic_field_b))**2)*np.cross(v_magnetic_field_b,v_torque_control_b)
     
     v_torque_app_b = np.cross(v_magnetic_moment_b,v_magnetic_field_b)
-    return v_torque_app_b
+    
+    sat.setAppTorque_b(v_torque_app_b)
