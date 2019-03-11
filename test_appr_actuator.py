@@ -36,7 +36,8 @@ class TestapprActuator(unittest.TestCase):
                 s.setMagmomentRequired_b(mag_moment_b)
                 s.setMag_i(magfield_i)
                 
-                app_torque=act.actuatorTypeA(s)
+                act.actuatorTypeA(s)
+                app_torque=s.getAppTorque_b
                 
                 self.assertTrue(np.allclose(app_torque, app_torque_exp))
 
@@ -67,7 +68,8 @@ class TestapprActuator(unittest.TestCase):
                 s.setMag_i(magfield_i)
                 s.setControl_b(torque_req)
                 
-                app_torque=act.actuatorTypeB(s)
+                act.actuatorTypeB(s)
+                app_torque=s.getAppTorque_b
                 
                 self.assertTrue(np.allclose(app_torque, app_torque_exp))
                 
