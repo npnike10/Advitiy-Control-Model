@@ -1,31 +1,35 @@
-import numpy as np                                 
-from constants_1U import m_INERTIA,m_INERTIA_inv, G, M_EARTH, v_w_IO_o
-from qnv import quatDerBI, quat2rotm, quatDerBO
-import frames
-#-----------------------------------------------------------------------------------------------------------------------------
+import numpy as np
+from qdesired import qd
+from constants import h,j,j1,kp,kv
+from wdesired import fw,wddot
+from quat import qp,qinv,rm,cpm
 
-def x_dot_BO(sat):    #need m_INERTIA (abot center of mass)
-    '''
-        This function calculates the derivative of quaternion (q_BO)
-        and angular velocity w_BOB
-        Input: satellite, time
-        Output: Differential state vector
-    '''
-    #get torques acting about COM
-    v_torque_control_b = sat.getControl_b()     #Control torque
-    v_torque_dist_b = sat.getDisturbance_b()    #Disturbance torque
-    v_torque_b = v_torque_control_b + v_torque_dist_b
-    
-    #get current state
-    v_q_BO = sat.getQ_BO()  #unit quaternion rotating from orbit to body 
-    v_w_BO_b = sat.getW_BO_b()  #angular velocity of body frame wrt orbit frame in body frame
-    R = quat2rotm(v_q_BO)
-    #Kinematic equation
-    v_q_BO_dot = quatDerBO(v_q_BO,v_w_BO_b)   
-    v_w_BI_b = frames.wBOb2wBIb(v_w_BO_b,v_q_BO,v_w_IO_o)
-    v_w_OI_o = -v_w_IO_o.copy()
 
-    #Dynamic equation - Euler equation of motion
-    v_w_BO_b_dot = np.dot(m_INERTIA_inv,v_torque_b - np.cross(v_w_BI_b,np.dot(m_INERTIA,v_w_BI_b))) - np.dot(R, (np.cross(v_w_BO_b, v_w_OI_o)))     
-    v_x_dot = np.hstack((v_q_BO_dot,v_w_BO_b_dot))
-    return v_x_dot   
+def ydot(t,y): #the function which is the derivative of state vector 
+    qo=y[0]
+    qv=y[1:4]
+    w=y[4:]
+    q_desired=qd(int(t/h))
+    s=qp(qinv(q_desired),y[0:4])
+    delw=w-np.dot(rm(s),fw(t))
+
+    f=np.zeros(7)
+
+    f[0]=-0.5*np.dot(qv,w)
+    f[1:4]=0.5*(qo*w+np.cross(qv,w))
+    f[4:]=-np.dot(cpm(delw),np.dot(rm(s),fw(t)))+np.dot(rm(s),wddot(t))-kp*np.dot(j1,s[1:])-kv*np.dot(j1,delw)
+
+    return f
+
+def y2dot(t,y):
+    so=y[0]
+    sv=y[1:4]
+    dw=y[4:]
+
+    f=np.zeros(7)
+
+    f[0]=-0.5*np.dot(sv,dw)
+    f[1:4]=0.5*(so*dw+np.cross(sv,dw))
+    f[4:]=-kp*np.dot(j1,sv)-kv*np.dot(j1,dw)
+
+    return f
